@@ -49,7 +49,16 @@
 					var senha = Cripto.hash(pUser.senha,"asdbakjs");
 					if(user && user.senha == senha){
 						user.ultimo_login = Date.now();
-						self.save(user,function(result){ callback(result); });
+						self.save(user,function(result){ 							
+							result.result = {
+							id : result.result._id,
+							data_criacao : result.result.data_criacao,
+							data_atualizacao : result.result.data_atualizacao,
+							ultimo_login : result.result.ultimo_login,
+						};
+							result.result.token = jwt.sign(result.result,Config.passport.secret,{"expiresIn":3080});
+							callback(result); 
+						});
 					}
 					else{
 						callback({"message":msgErrorLogin,"status":false,"statusCode":401});
